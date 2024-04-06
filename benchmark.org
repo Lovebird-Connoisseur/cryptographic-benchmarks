@@ -7,8 +7,6 @@ The operations we're gonna test are:
   - Asymmetric encryption and decryption using the RSA algorithm.
   - Hashing using the SHA2-256 algorithm.
 
-TODO: Add links to wikipedia.
-
 This program will be done using [[https://en.wikipedia.org/wiki/Literate_programming][Literate Programming]], as to make the program itself and the report one and the same, removing the need to switch back and forth while reading the report to see the implementation.
 
 Expanding on the above point, we will be specifically be using [[https://orgmode.org/worg/org-contrib/babel/][Org-Babel]], which comes included in [[https://www.gnu.org/software/emacs/][Emacs]] by default.
@@ -19,3 +17,5 @@ Expanding on the above point, we will be specifically be using [[https://orgmode
 3. Records various performance metrics.
 4. Computes the average of those metrics.
 5. Displays them visually using plots.
+
+TODO: Import libraries
