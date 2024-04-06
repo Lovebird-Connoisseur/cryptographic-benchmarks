@@ -19,3 +19,7 @@ Expanding on the above point, we will be specifically be using [[https://orgmode
 5. Displays them visually using plots.
 
 TODO: Import libraries
+
+#+begin_src lisp
+  (defvar +SIMULATIONS+ 100)
+#+end_src
