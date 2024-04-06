@@ -4,12 +4,14 @@ The objective of this work is to measure the time different cryptograhic primiti
 
 The operations we're gonna test are:
   - Symmetric encryption and decryption using the AES algorithm.
-  - Assymetric encryption and decryption using the RSA algorithm.
+  - Asymmetric encryption and decryption using the RSA algorithm.
   - Hashing using the SHA2-256 algorithm.
 
 TODO: Add links to wikipedia.
 
-This program will be done using [[https://en.wikipedia.org/wiki/Literate_programming][Literate Programming]], as to make the program itself and the report one and the same, removing the need to add code screenshots of the implementation when explaining a concept.
+This program will be done using [[https://en.wikipedia.org/wiki/Literate_programming][Literate Programming]], as to make the program itself and the report one and the same, removing the need to switch back and forth while reading the report to see the implementation.
+
+Expanding on the above point, we will be specifically be using [[https://orgmode.org/worg/org-contrib/babel/][Org-Babel]], which comes included in [[https://www.gnu.org/software/emacs/][Emacs]] by default.
 
 * How this program works (in steps):
 1. Generates all files that we will run the tests on.
