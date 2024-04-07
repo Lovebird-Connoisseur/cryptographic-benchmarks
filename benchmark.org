@@ -20,13 +20,20 @@ Expanding on the above point, we will be specifically be using [[https://orgmode
 
 TODO: Import libraries
 
-First we need to declare our globals, in this case, the number of simulations we will run.
-Obviously the more simulations we run the more precise the results will be.
+First we need to declare our globals:
+1. The number of simulations we will run.
+2. The list of file sizes we will use to generate the files used for the benchmarks.
+
+Obviously the more simulations we run the more precise the results will be, altough a high number ofsimulations will significantly slow down our program.
+100 simulations should be a good starting point.
 
 Its also important to note that the first simulation will be significantly slower than the subsequent ones due to cold-cache.
 
 #+begin_src lisp :results silent
   (defvar +SIMULATIONS+ 100)
+  (defvar +AES-FILE-SIZES+ '(8 64 512 32768 262144 2097152))
+  (defvar +RSA-FILE-SIZES+ '(2 4 8 16 32 64 128))
+  (defvar +HASH-FILE-SIZES+ '(8 64 512 32768 262144 2097152))
 #+end_src
 
 Before running the tests on a given file we must first create it, for that we will define generate-file function that takes its size, and optionally, a prefix and suffix as its arguments.
