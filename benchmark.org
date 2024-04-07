@@ -20,6 +20,36 @@ Expanding on the above point, we will be specifically be using [[https://orgmode
 
 TODO: Import libraries
 
-#+begin_src lisp
+First we need to declare our globals, in this case, the number of simulations we will run.
+Obviously the more simulations we run the more precise the results will be.
+
+Its also important to note that the first simulation will be significantly slower than the subsequent ones due to cold-cache.
+
+#+begin_src lisp :results silent
   (defvar +SIMULATIONS+ 100)
+#+end_src
+
+Before running the tests on a given file we must first create it, for that we will define generate-file function that takes its size, and optionally, a prefix and suffix as its arguments.
+The function will then create a file (if it doesn't already exist) or override the contents of an existing one by filling it with random ascii (not utf!) characters as to make it of a given size.
+
+#+begin_src lisp :results silent
+    (defun generate-file (size &key (prefix "") (suffix ""))
+      "Generates a file of a given size, named *prefix*size*suffix*."
+      (with-open-file (stream (merge-pathnames
+                               (concatenate 'string prefix (write-to-string size) suffix)
+                               (uiop/os:getcwd))
+                              :direction :output
+                              :if-exists :supersede
+                              :if-does-not-exist :create)
+        (format stream "abc")))
+#+end_src
+
+For this particular program we will need to create various different files, each of them of a different size and each of them for a different purpose.
+The bellow function accepts a list of sizes (in bytes), optionally a prefix and suffix and creates all files, or overrides their contents, if they already exist.
+
+#+begin_src lisp :results silent
+  (defun generate-files (sizes &key (prefix "") (suffix ""))
+    "Creates a set of files of a given size, named *prefi*size*suffix*."
+    (dolist (size sizes nil)
+      (generate-file size :prefix prefix :suffix suffix)))
 #+end_src
