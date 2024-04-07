@@ -40,15 +40,16 @@ Before running the tests on a given file we must first create it, for that we wi
 The function will then create a file (if it doesn't already exist) or override the contents of an existing one by filling it with random ascii (not utf!) characters as to make it of a given size.
 
 #+begin_src lisp :results silent
-    (defun generate-file (size &key (prefix "") (suffix ""))
-      "Generates a file of a given size, named *prefix*size*suffix*."
-      (with-open-file (stream (merge-pathnames
-                               (concatenate 'string prefix (write-to-string size) suffix)
-                               (uiop/os:getcwd))
-                              :direction :output
-                              :if-exists :supersede
-                              :if-does-not-exist :create)
-        (format stream "abc")))
+  (defun generate-file (size &key (prefix "") (suffix ""))
+    "Generates a file of a given size, named *prefix*size*suffix*."
+    (with-open-file (stream (merge-pathnames
+                             (concatenate 'string prefix (write-to-string size) suffix)
+                             (uiop/os:getcwd))
+                            :external-format :ASCII
+                            :direction :output
+                            :if-exists :supersede
+                            :if-does-not-exist :create)
+      (format stream "abc")))
 #+end_src
 
 For this particular program we will need to create various different files, each of them of a different size and each of them for a different purpose.
