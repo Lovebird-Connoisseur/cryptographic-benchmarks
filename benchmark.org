@@ -39,6 +39,10 @@ Its also important to note that the first simulation will be significantly slowe
 Before running the tests on a given file we must first create it, for that we will define generate-file function that takes its size, and optionally, a prefix and suffix as its arguments.
 The function will then create a file (if it doesn't already exist) or override the contents of an existing one by filling it with random ascii (not utf!) characters as to make it of a given size.
 
+The reason for format to only write 2 characters at a time to a file is due to 2 being the [[https://en.wikipedia.org/wiki/Greatest_common_divisor][Greatest Common Divisor]] of all file sizes defined above.
+
+When we finish writing to the file, a newline is inserted at the end, [[https://stackoverflow.com/questions/729692/why-should-text-files-end-with-a-newline][this is the recommended thing to do]] when it comes to text files.
+
 #+begin_src lisp :results silent
   (defun generate-file (size &key (prefix "") (suffix ""))
     "Generates a file of a given size, named *prefix*size*suffix*."
@@ -49,7 +53,9 @@ The function will then create a file (if it doesn't already exist) or override t
                             :direction :output
                             :if-exists :supersede
                             :if-does-not-exist :create)
-      (format stream "abc")))
+      (dotimes (i (- (floor size 2) 1) nil)
+        (format stream "ab"))
+      (format stream "~C~C" #\c #\linefeed)))
 #+end_src
 
 For this particular program we will need to create various different files, each of them of a different size and each of them for a different purpose.
