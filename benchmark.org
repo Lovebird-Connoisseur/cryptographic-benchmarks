@@ -12,21 +12,34 @@ This program will be done using [[https://en.wikipedia.org/wiki/Literate_program
 Expanding on the above point, we will be specifically be using [[https://orgmode.org/worg/org-contrib/babel/][Org-Babel]], which comes included in [[https://www.gnu.org/software/emacs/][Emacs]] by default.
 
 * How this program works (in steps):
-1. Generates all files that we will run the tests on.
-2. Runs multiple simulations of encrypting, decrypting and hashing on a given set of files
-3. Records various performance metrics.
-4. Computes the average of those metrics.
-5. Displays them visually using plots.
+  1. Generates all files that we will run the tests on.
+  2. Runs multiple simulations of encrypting, decrypting and hashing on a given set of files
+  3. Records various performance metrics.
+  4. Computes the average of those metrics.
+  5. Displays them visually using plots.
 
-For this program we will be using Lisps cryptography library ironclad.
+* How to run these simulation yourself:
+
+To run this program you will need the following:
+  - [[https://www.sbcl.org/][sbcl]], altough it will probably work with other implementations
+  - [[https://www.gnu.org/software/emacs/][emacs]], along with org-babel [[https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-lisp.html][configured for lisp]]
+  - either [[https://slime.common-lisp.dev/][slime]] or [[https://github.com/joaotavora/sly][sly]], I personally use sly due to its advantages (ascii cat art being the most notable), but it shouldn't make a difference
+  - [[https://www.quicklisp.org/beta/][quicklisp]]
+
+For this program we will be using the [[https://github.com/sharplispers/ironclad][ironclad]] cryptography system.
 
 #+begin_src lisp :results silent
   (ql:quickload "ironclad")
 #+end_src
 
-First we need to declare our globals:
-1. The number of simulations we will run.
-2. The list of file sizes we will use to generate the files used for the benchmarks.
+* Constants
+
+First we need to declare our constants:
+  1. The number of simulations we will run.
+  2. The list of file sizes we will use to generate the files used for the benchmarks.
+  3. The list holding all alphabet characters in lowercase.
+  4. The RSA key size.
+  5. The AES key size.
 
 Obviously the more simulations we run the more precise the results will be, altough a high number ofsimulations will significantly slow down our program.
 100 simulations should be a good starting point.
