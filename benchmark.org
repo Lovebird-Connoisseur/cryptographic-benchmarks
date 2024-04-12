@@ -18,7 +18,11 @@ Expanding on the above point, we will be specifically be using [[https://orgmode
 4. Computes the average of those metrics.
 5. Displays them visually using plots.
 
-TODO: Import libraries
+For this program we will be using Lisps cryptography library ironclad.
+
+#+begin_src lisp :results silent
+  (ql:quickload "ironclad")
+#+end_src
 
 First we need to declare our globals:
 1. The number of simulations we will run.
@@ -31,10 +35,6 @@ Its also important to note that the first simulation will be significantly slowe
 
 On a side note, while using lists to store our values is quite a bit more ineficient than simply using arrays, but considering how few elements each list holds optimization isn't too important anyway.
 I also won't be really opimizing the rest of the code, mainly adding type annotation, for now at least.
-
-#+begin_src lisp :results silent
-  (ql:quickload "ironclad")
-#+end_src
 
 #+begin_src lisp :results silent
   (defvar +SIMULATIONS+ 100)
@@ -87,3 +87,11 @@ The bellow function accepts a list of sizes (in bytes), optionally a prefix and 
       (defparameter aes-cipher (ironclad:make-cipher :aes :mode :ecb :key AES-KEY :padding :pkcs7))
       (format t "Aes cipher: ~s~%Rsa priv key: ~s~%Rsa pub key:~s~%" aes-cipher rsa-private-key rsa-public-key)))
 #+end_src
+
+TODO: function to encrypt aes
+TODO: function to decrypt aes
+TODO: function to hash
+TODO: function to encrypt rsa
+TODO: function to decrypt rsa
+TODO: storing simulation results
+TODO: plotting simulation results
