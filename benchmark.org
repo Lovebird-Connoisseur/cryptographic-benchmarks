@@ -33,11 +33,17 @@ On a side note, while using lists to store our values is quite a bit more inefic
 I also won't be really opimizing the rest of the code, mainly adding type annotation, for now at least.
 
 #+begin_src lisp :results silent
+  (ql:quickload "ironclad")
+#+end_src
+
+#+begin_src lisp :results silent
   (defvar +SIMULATIONS+ 100)
   (defvar +AES-FILE-SIZES+ '(8 64 512 32768 262144 2097152))
   (defvar +RSA-FILE-SIZES+ '(2 4 8 16 32 64 128))
   (defvar +HASH-FILE-SIZES+ '(8 64 512 32768 262144 2097152))
   (defvar +ALPHABET+ '(#\a #\b #\c #\d #\e #\f #\g #\h #\i #\j #\k #\l #\m #\n #\o #\p #\q #\r #\s #\t #\u #\v #\w #\x #\y #\z))
+  (defvar +RSA-KEY-SIZE+ 2048)
+  (defvar +AES-KEY-SIZE+ 256)
 #+end_src
 
 Before running the tests on a given file we must first create it, for that we will define generate-file function that takes its size, and optionally, a prefix and suffix as its arguments.
@@ -71,4 +77,13 @@ The bellow function accepts a list of sizes (in bytes), optionally a prefix and 
     "Creates a set of files of a given size, named *prefi*size*suffix*."
     (dolist (size sizes nil)
       (generate-file size :prefix prefix :suffix suffix)))
+#+end_src
+
+#+begin_src lisp :results silent
+  (defun main ()
+    "Main program loop."
+    (multiple-value-bind (rsa-private-key rsa-public-key) (ironclad:generate-key-pair :rsa :num-bits 2048)
+      (defparameter aes-key (make-array (floor +AES-KEY-SIZE+ 8) :element-type '(unsigned-byte 8) :initial-element 0))
+      (defparameter aes-cipher (ironclad:make-cipher :aes :mode :ecb :key AES-KEY :padding :pkcs7))
+      (format t "Aes cipher: ~s~%Rsa priv key: ~s~%Rsa pub key:~s~%" aes-cipher rsa-private-key rsa-public-key)))
 #+end_src
