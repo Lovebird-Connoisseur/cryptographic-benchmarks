@@ -1,3 +1,9 @@
 #+TITLE: Crypto Benchmarks
 
 Benchmarks of various cryptographic algorithms.
+
+* Things I learned with this project:
+- How to import and use external libraries.
+- The basic of litterate programming using org-babel.
+- Good practises: When to use defvar, defparameter or defconstant.
+- How to use ironclad library.
