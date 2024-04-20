@@ -2,7 +2,7 @@
 
 The objective of this work is to measure the time different cryptograhic primitives take with text files of various sizes.
 
-The operations we're gonna test are:
+The operations we're going to test are:
   - Symmetric encryption and decryption using the AES algorithm.
   - Asymmetric encryption and decryption using the RSA algorithm.
   - Hashing using the SHA2-256 algorithm.
@@ -153,6 +153,7 @@ TODO: return time interval (and possibly other data) in microseconds
 #+end_src
 
 TODO: generate random aes key
+TODO: make sure the file generation function creates random files
 TODO: test aes encryption/decryption functions
 TODO: function to hash
 TODO: function to encrypt rsa
