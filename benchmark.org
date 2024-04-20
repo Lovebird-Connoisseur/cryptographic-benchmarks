@@ -30,6 +30,7 @@ For this program we will be using the [[https://github.com/sharplispers/ironclad
 
 #+begin_src lisp :results silent
   (ql:quickload "ironclad")
+  (ql:quickload "alexadria")
 #+end_src
 
 * Constants
@@ -50,13 +51,13 @@ On a side note, while using lists to store our values is quite a bit more inefic
 I also won't be really opimizing the rest of the code, mainly adding type annotation, for now at least.
 
 #+begin_src lisp :results silent
-  (defvar +SIMULATIONS+ 100)
-  (defvar +AES-FILE-SIZES+ '(8 64 512 32768 262144 2097152))
-  (defvar +RSA-FILE-SIZES+ '(2 4 8 16 32 64 128))
-  (defvar +HASH-FILE-SIZES+ '(8 64 512 32768 262144 2097152))
-  (defvar +ALPHABET+ '(#\a #\b #\c #\d #\e #\f #\g #\h #\i #\j #\k #\l #\m #\n #\o #\p #\q #\r #\s #\t #\u #\v #\w #\x #\y #\z))
-  (defvar +RSA-KEY-SIZE+ 2048)
-  (defvar +AES-KEY-SIZE+ 256)
+  (defconstant +simulations+ 100 "The number of simulations to run.")
+  (defconstant +aes-file-sizes+ '(8 64 512 32768 262144 2097152) "The set of file sizes to test aes encryption/decryption times on.")
+  (defconstant +rsa-file-sizes+ '(2 4 8 16 32 64 128) "The set of file sizes to test rsa encryption/decryption on.")
+  (defconstant +sha-file-sizes+ '(8 64 512 32768 262144 2097152) "The set of file sizes to test sha hashing on.")
+  (defconstant +alphabet+ '(#\a #\b #\c #\d #\e #\f #\g #\h #\i #\j #\k #\l #\m #\n #\o #\p #\q #\r #\s #\t #\u #\v #\w #\x #\y #\z) "A list containing all english alphabet characters.")
+  (defconstant +rsa-key-size+ 2048 "The size of the rsa key to be used (in bits).")
+  (defconstant +aes-key-size+ 256 "The size of the aes key to be used (in bits).")
 #+end_src
 
 Before running the tests on a given file we must first create it, for that we will define generate-file function that takes its size, and optionally, a prefix and suffix as its arguments.
@@ -78,7 +79,7 @@ When we finish writing to the file, a newline is inserted at the end, [[https://
                             :if-exists :supersede
                             :if-does-not-exist :create)
       (dotimes (i (- (floor size 2) 1) nil)
-        (format stream "ab"))
+        (format stream "abcdef"))
       (format stream "~C~C" #\c #\linefeed)))
 #+end_src
 
@@ -92,19 +93,70 @@ The bellow function accepts a list of sizes (in bytes), optionally a prefix and 
       (generate-file size :prefix prefix :suffix suffix)))
 #+end_src
 
-#+begin_src lisp :results silent
-  (defun main ()
-    "Main program loop."
-    (multiple-value-bind (rsa-private-key rsa-public-key) (ironclad:generate-key-pair :rsa :num-bits 2048)
-      (defparameter aes-key (make-array (floor +AES-KEY-SIZE+ 8) :element-type '(unsigned-byte 8) :initial-element 0))
-      (defparameter aes-cipher (ironclad:make-cipher :aes :mode :ecb :key AES-KEY :padding :pkcs7))
-      (format t "Aes cipher: ~s~%Rsa priv key: ~s~%Rsa pub key:~s~%" aes-cipher rsa-private-key rsa-public-key)))
+TODO: return time interval (and possibly other data) in microseconds
+#+begin_src lisp
+  (defun aes-encrypt (filename key cipher)
+    (unless (probe-file filename)
+      (format t "Error: ~s does not exist.~%" filename)
+      (return nil))
+
+    (defvar text (uiop:read-file-string filename))
+    (ironclad:encrypt-in-place cipher text)
+    (alexandria:write-string-into-file text filename))
 #+end_src
 
-TODO: function to encrypt aes
-TODO: function to decrypt aes
+#+RESULTS:
+: AES-ENCRYPT
+
+#+begin_src lisp
+  (defun aes-decrypt (filename key cipher)
+    (unless (probe-file filename)
+      (format t "Error: ~s does not exist.~%" filename)
+      (return nil))
+
+    (defvar text (uiop:read-file-string filename))
+    (ironclad:decrypt-in-place cipher text)
+    (alexandria:write-string-into-file text filename))
+#+end_src
+
+#+RESULTS:
+: AES-DECRYPT
+
+#+begin_src lisp :results silent
+          (defun main ()
+            "Main program loop."
+            (multiple-value-bind (rsa-private-key rsa-public-key) (ironclad:generate-key-pair :rsa :num-bits 2048)
+              (defconstant +aes-key+ (ironclad:ascii-string-to-byte-array "0123456789abcdef"))
+              (defconstant +aes-cipher+ (ironclad:make-cipher :aes :mode :ecb :key +aes-key+ :padding :pkcs7))
+
+              (dotimes (i +simulations+ nil)
+                (generate-files +aes-file-sizes+ :prefix "aes" :suffix ".txt")
+                (generate-files +rsa-file-sizes+ :prefix "rsa" :suffix ".txt")
+                (generate-files +sha-file-sizes+ :prefix "sha" :suffix ".txt")
+
+                (defvar aes-encryption-results '(0 0 0 0 0 0))
+                (defvar aes-decryption-results '(0 0 0 0 0 0))
+
+                ;; TODO: turn these into a function that accepts either rsa or aes
+                (loop for filesize in +aes-file-sizes+ and index from 0
+                      do (setf (nth index aes-encryption-results)
+                               (aes-encrypt
+                                (concatenate 'string "aes"
+                                             (write-to-string filesize) ".txt")
+                                +aes-key+
+                                +aes-cipher+))
+                         (setf (nth index aes-decryption-results)
+                               (aes-decrypt
+                                (concatenate 'string "aes"
+                                             (write-to-string filesize) ".txt")
+                                +aes-cipher+))))))
+#+end_src
+
+TODO: generate random aes key
+TODO: test aes encryption/decryption functions
 TODO: function to hash
 TODO: function to encrypt rsa
 TODO: function to decrypt rsa
 TODO: storing simulation results
 TODO: plotting simulation results
+TODO: consider changing the defvar's inside the main function to local scope
