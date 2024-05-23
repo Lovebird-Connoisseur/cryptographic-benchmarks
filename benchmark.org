@@ -116,35 +116,39 @@ The bellow function accepts a list of sizes (in bytes), optionally a prefix and 
 #+end_src
 
 #+begin_src lisp :results silent
-           (defun main ()
-             "Main program loop."
-             (multiple-value-bind (rsa-private-key rsa-public-key)
-                                  (ironclad:generate-key-pair :rsa :num-bits 2048)
-               (defconstant +aes-key+ (ironclad:ascii-string-to-byte-array "0123456789abcdef"))
-               (defconstant +aes-cipher+ (ironclad:make-cipher :aes :mode :ecb :key +aes-key+ :padding :pkcs7))
+    (defun main ()
+      "Main program loop."
+      (multiple-value-bind
+       (rsa-private-key rsa-public-key)
+       (ironclad:generate-key-pair :rsa :num-bits 2048)
+       (let ((+aes-key+ (ironclad:ascii-string-to-byte-array "0123456789abcdef"))
+             (+aes-cipher+ (ironclad:make-cipher :aes :mode
+                                                 :ecb :key +aes-key+
+                                                 :padding :pkcs7)))
+         (dotimes (i +simulations+ nil)
+           (generate-files +aes-file-sizes+ :prefix "aes" :suffix ".txt")
+           (generate-files +rsa-file-sizes+ :prefix "rsa" :suffix ".txt")
+           (generate-files +sha-file-sizes+ :prefix "sha" :suffix ".txt")
 
-               (dotimes (i +simulations+ nil)
-                 (generate-files +aes-file-sizes+ :prefix "aes" :suffix ".txt")
-                 (generate-files +rsa-file-sizes+ :prefix "rsa" :suffix ".txt")
-                 (generate-files +sha-file-sizes+ :prefix "sha" :suffix ".txt")
+           (let ((aes-encryption-results '(0 0 0 0 0 0))
+                 (aes-decryption-results '(0 0 0 0 0 0)))
 
-                 (defvar aes-encryption-results '(0 0 0 0 0 0))
-                 (defvar aes-decryption-results '(0 0 0 0 0 0))
-
-                 ;; TODO: turn these into a function that accepts either rsa or aes
-                 (loop for filesize in +aes-file-sizes+ and index from 0
-                       do (setf (nth index aes-encryption-results)
-                                (aes-encrypt
-                                 (concatenate 'string "aes"
-                                              (write-to-string filesize) ".txt")
-                                 +aes-key+
-                                 +aes-cipher+))
-                          (setf (nth index aes-decryption-results)
-                                (aes-decrypt
-                                 (concatenate 'string "aes"
-                                              (write-to-string filesize) ".txt")
-                                 +aes-cipher+))))))
-#+end_src
+             ;; TODO: turn these into a function that accepts either rsa or aes
+             (loop for filesize in +aes-file-sizes+ and index from 0
+                   do (setf (nth index aes-encryption-results)
+                            (aes-encrypt
+                             (concatenate 'string "aes"
+                                          (write-to-string filesize)
+                                          ".txt")
+                             +aes-key+
+                             +aes-cipher+))
+                   (setf (nth index aes-decryption-results)
+                         (aes-decrypt
+                          (concatenate 'string "aes"
+                                       (write-to-string filesize)
+                                       ".txt")
+                          +aes-cipher+))))))))
+       #+end_src
 
 TODO: return time to encrypt/decrypt/hash in microseconds
 TODO: generate random aes key
