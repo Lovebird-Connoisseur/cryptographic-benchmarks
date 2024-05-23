@@ -30,7 +30,7 @@ For this program we will be using the [[https://github.com/sharplispers/ironclad
 
 #+begin_src lisp :results silent
   (ql:quickload "ironclad")
-  (ql:quickload "alexadria")
+  (ql:quickload "alexandria")
 #+end_src
 
 * Constants
@@ -65,7 +65,6 @@ The function will then create a file (if it doesn't already exist) or override t
 
 The reason for format to only write 2 characters at a time to a file is due to 2 being the [[https://en.wikipedia.org/wiki/Greatest_common_divisor][Greatest Common Divisor]] of all file sizes defined above.
 
-TODO: Perhaps replace the link to the relevant sections of the posix standard?
 When we finish writing to the file, a newline is inserted at the end, [[https://stackoverflow.com/questions/729692/why-should-text-files-end-with-a-newline][this is the recommended thing to do]] when it comes to text files.
 
 #+begin_src lisp :results silent
