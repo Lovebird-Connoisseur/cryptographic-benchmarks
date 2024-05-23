@@ -95,23 +95,21 @@ The bellow function accepts a list of sizes (in bytes), optionally a prefix and 
 #+begin_src lisp :results silent
   (defun aes-encrypt (filename key cipher)
     (unless (probe-file filename)
-      (format t "Error: ~s does not exist.~%" filename)
-      (return nil))
+      (format t "Error: ~s does not exist.~%" filename))
 
-    (defvar text (uiop:read-file-string filename))
-    (ironclad:encrypt-in-place cipher text)
-    (alexandria:write-string-into-file text filename))
+    (let ((text (uiop:read-file-string filename)))
+      (ironclad:encrypt-in-place cipher text)
+      (alexandria:write-string-into-file text filename)))
 #+end_src
 
-#+begin_src lisp :resuls silent
+#+begin_src lisp :results silent
   (defun aes-decrypt (filename key cipher)
     (unless (probe-file filename)
-      (format t "Error: ~s does not exist.~%" filename)
-      (return nil))
+      (format t "Error: ~s does not exist.~%" filename))
 
-    (defvar text (uiop:read-file-string filename))
-    (ironclad:decrypt-in-place cipher text)
-    (alexandria:write-string-into-file text filename))
+    (let ((text (uiop:read-file-string filename)))
+      (ironclad:decrypt-in-place cipher text)
+      (alexandria:write-string-into-file text filename)))
 #+end_src
 
 #+begin_src lisp :results silent
