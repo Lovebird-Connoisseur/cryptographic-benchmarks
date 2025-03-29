@@ -154,6 +154,4 @@ TODO: test aes encryption/decryption functions
 TODO: function to hash
 TODO: function to encrypt rsa
 TODO: function to decrypt rsa
-TODO: storing simulation results
 TODO: plotting simulation results
-TODO: consider changing the defvar's inside the main function to local scope
